@@ -31,7 +31,8 @@
   "license": "MIT",
   "dependencies": {
     "bootstrap": "^4.5.3",
-    "vue": "^2.6.12"
+    "vue": "^2.6.12",
+    "font-awesome": "^4.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",

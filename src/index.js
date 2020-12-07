@@ -2,11 +2,12 @@
 import './js/'
 
 // SCSS
-// import './assets/scss/main.scss'
+import './assets/scss/main.scss'
 // CSS
-import './assets/css/main.css';
+// import './assets/css/main.css';
 // Bootstrap
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import '../node_modules/font-awesome/css/font-awesome.min.css'
 
 // Vue.js
 window.Vue = require('vue')

@@ -102,5 +102,16 @@ section,
   }
 }
 
-// Modules:
-// example: @import "modules/my-module.scss";
+.user-container {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.one-user {
+  margin: 20px;
+  border-bottom: #BEBFC8 solid 1px;
+}
+
+th, td {
+  text-align: center;
+}
