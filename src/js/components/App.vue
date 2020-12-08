@@ -5,7 +5,7 @@
       <div class="card-header">
         Add a new user
       </div>
-      <div class="card-body">
+      <div class="card-body add-container">
         <form class="form-inline"
               @submit.prevent="onAdd">
           <div class="form-group">
@@ -31,17 +31,25 @@
           </div>
           <div class="form-group">
             <label>Phone</label>
-            <input v-model="newUser.phone"
-                   type="text"
-                   class="form-control ml-sm-2 mr-sm-1 my-2"
-                   required>
+            <label>
+              <input v-model="newUser.phone"
+                     type="text"
+                     class="form-control ml-sm-2 mr-sm-1 my-2"
+                     required>
+            </label>
           </div>
           <div class="form-group">
             <label>Status</label>
-            <input v-model="newUser.userStatus"
-                   type="text"
-                   class="form-control ml-sm-2 mr-sm-2 my-2"
-                   required>
+            <label>
+              <select name="select"
+                      class="form-control ml-sm-2 mr-sm-1 my-2"
+                      v-model="newUser.userStatus"
+                      required>
+                <option value="client">client</option>
+                <option value="partner">partner</option>
+                <option value="admin">admin</option>
+              </select>
+            </label>
           </div>
 <!--                    <div class="form-group">-->
 <!--                      <label>Date Of Creation</label>-->
@@ -57,12 +65,10 @@
 <!--                             class="form-control ml-sm-2 mr-sm-2 my-2"-->
 <!--                             >-->
 <!--                    </div>-->
-          <div class="ml-auto text-right">
             <button type="submit"
-                    class="btn btn-primary my-2">Add
+                    class="btn btn-primary icon-margin">Add
             </button>
 
-          </div>
         </form>
       </div>
     </div>
@@ -138,10 +144,10 @@
                 <td class="col-xl-1"></td>
                 <td class="col-xl-1">
                       <span class="icon">
-                        <i @click="onUpdate"
+                        <i @click="onUpdate(index)"
                            class="fa fa-check"></i>
                       </span>
-                  <span class="icon">
+                  <span class="icon icon-margin">
                         <i @click="onCancel"
                            class="fa fa-ban"></i>
                       </span>
@@ -176,14 +182,15 @@
                 <td class="col-xl-1">
                   <a href="#"
                      class="icon">
-                    <i @click="onDelete(user.id, index)"
-                       class="fa fa-trash"></i>
-                  </a>
-                  <a href="#"
-                     class="icon">
                     <i @click="onEdit(user.id, user)"
                        class="fa fa-pencil"></i>
                   </a>
+                  <a href="#"
+                     class="icon icon-margin">
+                    <i @click="onDelete(user.id, index)"
+                       class="fa fa-trash"></i>
+                  </a>
+
                 </td>
               </template>
             </tr>
@@ -256,9 +263,8 @@ export default {
       localStorage.setItem(id, parsed);
     },
 
-    onUpdate() {
+    onUpdate(index) {
       this.addUserToLocalStorage(this.editId, this.editUser);
-      let index = this.getUserIndexById(this.editId);
 
       this.users[index].id = this.editUser.id;
       this.users[index].fullName = this.editUser.fullName;
@@ -276,8 +282,10 @@ export default {
     },
 
     onDelete(id, index) {
-      localStorage.removeItem(id);
-      this.users.splice(index, 1);
+      if (confirm('Are you sure you want to delete the user?')) {
+        localStorage.removeItem(id);
+        this.users.splice(index, 1);
+      }
     },
 
     onEdit(id, user) {
@@ -312,10 +320,6 @@ export default {
 
       this.lastId = id;
       this.newUser = {};
-    },
-
-    getUserIndexById(id) {
-      return Object.keys(this.users).find(index => this.users[index].id === id);
     },
   },
 
