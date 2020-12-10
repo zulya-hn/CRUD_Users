@@ -13,7 +13,11 @@
             <input v-model="newUser.fullName"
                    type="text"
                    class="form-control ml-sm-2 mr-sm-2 my-2"
-                   required>
+            >
+
+            <!--                   @keypress="noNumber(event)"-->
+            <!--                     v-validate="{ required: true, regex: /^\d{4} \d{6}$/ }"  -->
+
           </div>
           <div class="form-group">
             <label>Email</label>
@@ -40,7 +44,6 @@
           </div>
           <div class="form-group">
             <label>Status</label>
-            <label>
               <select name="select"
                       class="form-control ml-sm-2 mr-sm-1 my-2"
                       v-model="newUser.userStatus"
@@ -49,26 +52,10 @@
                 <option value="partner">partner</option>
                 <option value="admin">admin</option>
               </select>
-            </label>
           </div>
-<!--                    <div class="form-group">-->
-<!--                      <label>Date Of Creation</label>-->
-<!--                      <input v-model="newUser.dateOfCreation"-->
-<!--                             type="text"-->
-<!--                             class="form-control ml-sm-2 mr-sm-2 my-2"-->
-<!--                             >-->
-<!--                    </div>-->
-<!--                    <div class="form-group">-->
-<!--                      <label>Last Change</label>-->
-<!--                      <input v-model="newUser.dateOfChange"-->
-<!--                             type="text"-->
-<!--                             class="form-control ml-sm-2 mr-sm-2 my-2"-->
-<!--                             >-->
-<!--                    </div>-->
             <button type="submit"
                     class="btn btn-primary icon-margin">Add
             </button>
-
         </form>
       </div>
     </div>
@@ -89,10 +76,10 @@
               <th class="col-lg-3 col-xl-2">
                 Email
               </th>
-              <th class="col-lg-3 col-xl-2">
+              <th class="col-lg-3 col-xl-1">
                 Password
               </th>
-              <th class="col-lg-3 col-xl-1">
+              <th class="col-lg-3 col-xl-2">
                 Phone
               </th>
               <th class="col-lg-3 col-xl-1">
@@ -135,10 +122,14 @@
                          required>
                 </td>
                 <td class="col-xl-1">
-                  <input v-model="editUser.userStatus"
-                         type="text"
-                         class="form-control"
-                         required>
+                  <select name="select"
+                          class="form-control"
+                          v-model="editUser.userStatus"
+                          required>
+                    <option value="client">client</option>
+                    <option value="partner">partner</option>
+                    <option value="admin">admin</option>
+                  </select>
                 </td>
                 <td class="col-xl-1"></td>
                 <td class="col-xl-1"></td>
@@ -163,20 +154,20 @@
                 <td class="col-lg-3 col-xl-2">
                   {{ user.email }}
                 </td>
-                <td class="col-lg-3 col-xl-2">
+                <td class="col-lg-3 col-xl-1">
                   {{ user.password }}
                 </td>
-                <td class="col-lg-3 col-xl-1">
+                <td class="col-lg-3 col-xl-2">
                   {{ user.phone }}
                 </td>
                 <td class="col-lg-3 col-xl-1">
                   {{ user.userStatus }}
                 </td>
                 <td class="col-lg-3 col-xl-1">
-                  {{ user.dateOfCreation }}
+                  {{ user.getDateOfCreation() }}
                 </td>
                 <td class="col-lg-3 col-xl-1">
-                  {{ user.dateOfChange }}
+                  {{ user.getDateOfChange() }}
                 </td>
 
                 <td class="col-xl-1">
@@ -210,18 +201,27 @@ export default {
       lastId: 0,
       editId: null,
       editUser: {},
-      newUser: {}
+      newUser: {},
+      controls: [],
     };
   },
 
   created() {
     this.getUsersFromStorage();
+    // this.validateUsers();
+
   },
   computed: {},
   methods: {
-    addForm() {
 
-    },
+    // validateUsers() {
+    //   for (let i = 0; i < this.users.length; i++) {
+    //     this.controls.push({
+    //       error: !this.users[i].pattern.test(this.users[i].value),
+    //       activated: this.users[i].value !== ''
+    //     });
+    //   }
+    // },
 
     validateUserData() {
 
@@ -273,8 +273,9 @@ export default {
       this.users[index].phone = this.editUser.phone;
       this.users[index].userStatus = this.editUser.userStatus;
       this.users[index].dateOfCreation = this.editUser.dateOfCreation;
-      this.users[index].dateOfChange = this.editUser.dateOfChange;
+      this.users[index].dateOfChange = new Date();
       this.editId = null;
+
     },
 
     onCancel() {
@@ -311,8 +312,8 @@ export default {
         this.newUser.password,
         this.newUser.phone,
         this.newUser.userStatus,
-        this.newUser.dateOfCreation,
-        this.newUser.dateOfChange);
+        null,
+        null);
 
       this.users.push(user);
 
@@ -321,7 +322,18 @@ export default {
       this.lastId = id;
       this.newUser = {};
     },
+
+
+    // noNumber(evt) {
+    //   let regex = new RegExp("^[a-zA-Z ]+$");
+    //   let key = String.fromCharCode(!evt.charCode ? evt.which : evt.charCode);
+    //   if (!regex.test(key)) {
+    //     event.preventDefault();
+    //     return false;
+    //   }
+    // }
   },
 
 };
+
 </script>
