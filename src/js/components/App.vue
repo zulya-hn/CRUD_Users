@@ -27,13 +27,6 @@
                    required>
           </div>
           <div class="form-group">
-            <label>Password</label>
-            <input v-model="newUser.password"
-                   type="text"
-                   class="form-control ml-sm-2 mr-sm-2 my-2"
-                   required>
-          </div>
-          <div class="form-group">
             <label>Phone</label>
             <label>
               <input v-model="newUser.phone"
@@ -44,151 +37,190 @@
           </div>
           <div class="form-group">
             <label>Status</label>
-              <select name="select"
-                      class="form-control ml-sm-2 mr-sm-1 my-2"
-                      v-model="newUser.userStatus"
-                      required>
-                <option value="client">client</option>
-                <option value="partner">partner</option>
-                <option value="admin">admin</option>
-              </select>
+            <select name="select"
+                    class="form-control ml-sm-2 mr-sm-1 my-2"
+                    v-model="newUser.userStatus"
+                    required>
+              <option v-for="status in User.getStatuses()"
+                      :value="status">
+                {{ status }}
+              </option>
+            </select>
           </div>
-            <button type="submit"
-                    class="btn btn-primary icon-margin">Add
-            </button>
+          <div class="form-group">
+            <label>Password</label>
+            <input v-model="newUser.password"
+                   type="text"
+                   class="form-control ml-sm-2 mr-sm-2 my-2"
+                   required>
+          </div>
+          <button type="submit"
+                  class="btn btn-primary icon-margin">Add
+          </button>
         </form>
       </div>
     </div>
-
+    <div class="search-container">
+    <form class="form-inline">
+      <div class="form-group">
+        <label>Email</label>
+        <input v-model="emailFilter"
+               type="text"
+               class="form-control ml-sm-2 mr-sm-2 my-2"
+               >
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <label>
+          <input v-model="phoneFilter"
+                 type="text"
+                 class="form-control ml-sm-2 mr-sm-2 my-2"
+                 >
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="select"
+                class="form-control ml-sm-2 mr-sm-2 my-2"
+                v-model="statusFilter"
+                >
+          <option value="">All Statuses</option>
+          <option v-for="status in User.getStatuses()"
+                  :value="status">
+            {{ status }}
+          </option>
+        </select>
+      </div>
+    </form>
+    </div>
     <div class="card mt-5">
       <div class="card-header">
         User List
       </div>
       <div class="card-body">
         <div class="user-container">
-            <tr class="row one-user">
-              <th class="col-lg-3 col-xl-1">
-                ID
-              </th>
-              <th class="col-lg-3 col-xl-2">
-                Full Name
-              </th>
-              <th class="col-lg-3 col-xl-2">
-                Email
-              </th>
-              <th class="col-lg-3 col-xl-1">
-                Password
-              </th>
-              <th class="col-lg-3 col-xl-2">
-                Phone
-              </th>
-              <th class="col-lg-3 col-xl-1">
+          <tr class="row one-user">
+            <th class="col-lg-3 col-xl-1">
+              ID
+            </th>
+            <th class="col-lg-3 col-xl-2">
+              Full Name
+            </th>
+            <th class="col-lg-3 col-xl-2">
+              Email
+            </th>
+            <th class="col-lg-3 col-xl-2">
+              Phone
+            </th>
+            <th class="col-lg-3 col-xl-1">
                 Status
-              </th>
-              <th class="col-lg-3 col-xl-1">
-                Date Of Creation
-              </th>
-              <th class="col-lg-3 col-xl-1">
-                Last Change
-              </th>
-              <th class="col-xl-1">
-              </th>
-            </tr>
-            <tr class="row one-user" v-for="(user, index) in users">
-              <template v-if="editId === user.id">
-                <td class="col-xl-1">{{ user.id }}</td>
-                <td class="col-xl-2">
-                  <input v-model="editUser.fullName"
-                         type="text"
-                         class="form-control"
-                         required>
-                </td>
-                <td class="col-xl-2">
-                  <input v-model="editUser.email"
-                         type="text"
-                         class="form-control"
-                         required>
-                </td>
-                <td class="col-xl-2">
-                  <input v-model="editUser.password"
-                         type="text"
-                         class="form-control"
-                         required>
-                </td>
-                <td class="col-xl-1">
-                  <input v-model="editUser.phone"
-                         type="text"
-                         class="form-control"
-                         required>
-                </td>
-                <td class="col-xl-1">
-                  <select name="select"
-                          class="form-control"
-                          v-model="editUser.userStatus"
-                          required>
-                    <option value="client">client</option>
-                    <option value="partner">partner</option>
-                    <option value="admin">admin</option>
-                  </select>
-                </td>
-                <td class="col-xl-1"></td>
-                <td class="col-xl-1"></td>
-                <td class="col-xl-1">
+            </th>
+            <th class="col-lg-3 col-xl-1">
+              Password
+            </th>
+            <th class="col-lg-3 col-xl-1">
+              Date Of Creation
+            </th>
+            <th class="col-lg-3 col-xl-1">
+              Last Change
+            </th>
+          </tr>
+          <tr class="row one-user"
+              v-for="(user, index) in filteredUsers">
+            <template v-if="editId === user.id">
+              <td class="col-xl-1">{{ user.id }}</td>
+              <td class="col-xl-2">
+                <input v-model="editUser.fullName"
+                       type="text"
+                       class="form-control"
+                       required>
+              </td>
+              <td class="col-xl-2">
+                <input v-model="editUser.email"
+                       type="text"
+                       class="form-control"
+                       required>
+              </td>
+              <td class="col-xl-2">
+                <input v-model="editUser.phone"
+                       type="text"
+                       class="form-control"
+                       required>
+              </td>
+              <td class="col-xl-1">
+                <select name="select"
+                        class="form-control"
+                        v-model="editUser.userStatus"
+                        required>
+                  <option v-for="status in User.getStatuses()"
+                          :value="status">
+                    {{ status }}
+                  </option>
+                </select>
+              </td>
+              <td class="col-xl-1">
+                <input v-model="editUser.password"
+                       type="text"
+                       class="form-control"
+                       required>
+              </td>
+              <td class="col-xl-1"></td>
+              <td class="col-xl-1"></td>
+              <td class="col-xl-1">
                       <span class="icon">
                         <i @click="onUpdate(index)"
                            class="fa fa-check"></i>
                       </span>
-                  <span class="icon icon-margin">
+                <span class="icon icon-margin">
                         <i @click="onCancel"
                            class="fa fa-ban"></i>
                       </span>
-                </td>
-              </template>
-              <template v-else>
-                <td class="col-lg-3 col-xl-1">
-                  {{ user.id }}
-                </td>
-                <td class="col-lg-3 col-xl-2">
-                  {{ user.fullName }}
-                </td>
-                <td class="col-lg-3 col-xl-2">
-                  {{ user.email }}
-                </td>
-                <td class="col-lg-3 col-xl-1">
-                  {{ user.password }}
-                </td>
-                <td class="col-lg-3 col-xl-2">
-                  {{ user.phone }}
-                </td>
-                <td class="col-lg-3 col-xl-1">
-                  {{ user.userStatus }}
-                </td>
-                <td class="col-lg-3 col-xl-1">
-                  {{ user.getDateOfCreation() }}
-                </td>
-                <td class="col-lg-3 col-xl-1">
-                  {{ user.getDateOfChange() }}
-                </td>
+              </td>
+            </template>
+            <template v-else>
+              <td class="col-lg-3 col-xl-1">
+                {{ user.id }}
+              </td>
+              <td class="col-lg-3 col-xl-2">
+                {{ user.fullName }}
+              </td>
+              <td class="col-lg-3 col-xl-2">
+                {{ user.email }}
+              </td>
+              <td class="col-lg-3 col-xl-2">
+                {{ user.phone }}
+              </td>
+              <td class="col-lg-3 col-xl-1">
+                {{ user.userStatus }}
+              </td>
+              <td class="col-lg-3 col-xl-1">
+                {{ user.password }}
+              </td>
+              <td class="col-lg-3 col-xl-1">
+                {{ user.getDateOfCreation() }}
+              </td>
+              <td class="col-lg-3 col-xl-1">
+                {{ user.getDateOfChange() }}
+              </td>
+              <td class="col-xl-1">
+                <a href="#"
+                   class="icon">
+                  <i @click="onEdit(user.id, user)"
+                     class="fa fa-pencil"></i>
+                </a>
+                <a href="#"
+                   class="icon icon-margin">
+                  <i @click="onDelete(user.id, index)"
+                     class="fa fa-trash"></i>
+                </a>
 
-                <td class="col-xl-1">
-                  <a href="#"
-                     class="icon">
-                    <i @click="onEdit(user.id, user)"
-                       class="fa fa-pencil"></i>
-                  </a>
-                  <a href="#"
-                     class="icon icon-margin">
-                    <i @click="onDelete(user.id, index)"
-                       class="fa fa-trash"></i>
-                  </a>
-
-                </td>
-              </template>
-            </tr>
-          </div>
+              </td>
+            </template>
+          </tr>
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -203,6 +235,10 @@ export default {
       editUser: {},
       newUser: {},
       controls: [],
+      User,
+      emailFilter: "",
+      phoneFilter: "",
+      statusFilter: "",
     };
   },
 
@@ -211,9 +247,16 @@ export default {
     // this.validateUsers();
 
   },
-  computed: {},
+  computed: {
+    filteredUsers() {
+      return this.users.filter(user =>
+          (this.statusFilter === "" || this.statusFilter === user.userStatus)
+        && (this.emailFilter === "" || user.email.includes(this.emailFilter))
+        && (this.phoneFilter === "" || user.phone.includes(this.phoneFilter))
+      );
+    },
+  },
   methods: {
-
     // validateUsers() {
     //   for (let i = 0; i < this.users.length; i++) {
     //     this.controls.push({
@@ -222,17 +265,19 @@ export default {
     //     });
     //   }
     // },
-
+    // getStatuses() {
+    //   return ['client', 'partner', 'admin'];
+    // },
     validateUserData() {
 
     },
 
     getUsersFromStorage() {
-      let usersIds = Object.keys(localStorage);
+      let usersIds = Object.keys(localStorage).map(Number);
       let maxId = 0;
 
       for (let userId of usersIds) {
-        let storageUser = localStorage.getItem(userId);
+        let storageUser = localStorage.getItem(userId.toString());
 
         try {
           storageUser = JSON.parse(storageUser);
@@ -244,11 +289,13 @@ export default {
             storageUser.phone,
             storageUser.userStatus,
             storageUser.dateOfCreation,
-            storageUser.dateOfChange);
+            storageUser.dateOfChange
+          );
 
           this.users.push(user);
 
           if (userId > maxId) {
+
             maxId = userId;
           }
         } catch (e) {
@@ -303,7 +350,7 @@ export default {
     },
 
     onAdd() {
-      let id = +(this.lastId) + 1;
+      let id = this.lastId + 1;
 
       let user = new User(
         id,
@@ -332,6 +379,24 @@ export default {
     //     return false;
     //   }
     // }
+
+    // notNumber (input) {
+    //   if (input.value.match(/\d/g || /\+/g)) {
+    //     return false;
+    //   }
+    //   input.classList.add('error');
+    //   return true;
+    // }
+
+    // notEmail(input) {
+    //   if (input.value.match(/@/g)) {
+    // (/.+@.+\..+/i)
+    //     return false;
+    //   }
+    //   input.classList.add('error');
+    //   return true;
+    // }
+
   },
 
 };

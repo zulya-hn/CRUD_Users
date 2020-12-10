@@ -102,6 +102,10 @@ section,
   }
 }
 
+th, td {
+  text-align: center;
+}
+
 .user-container {
   max-width: 1600px;
   margin: 0 auto;
@@ -110,10 +114,6 @@ section,
 .one-user {
   margin: 20px;
   border-bottom: #BEBFC8 solid 1px;
-}
-
-th, td {
-  text-align: center;
 }
 
 .icon-margin {
@@ -126,5 +126,8 @@ th, td {
 
 .none {
   display: none;
+}
+.search-container {
+  margin: 0 auto;
 }
 
