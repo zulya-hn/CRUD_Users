@@ -6,7 +6,7 @@ export class User {
     this.password = password;
     this.phone = phone;
     this.userStatus = userStatus;
-    this.dateOfCreation = dateOfCreation ? new Date(dateOfCreation) : new Date();
+    this.dateOfCreation = dateOfCreation ? new Date(dateOfCreation) : new Date(); // если только нью дэйт
     this.dateOfChange = dateOfChange ? new Date(dateOfChange) : new Date();
   }
 

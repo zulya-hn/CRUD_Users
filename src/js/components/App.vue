@@ -1,49 +1,19 @@
 <template>
   <div class="wrapper">
 
+    <!--  ADD NEW USER -->
+
     <add-new-user :newUser="newUser"
                   @add="onAdd()">
     </add-new-user>
 
-    <!--SEARCH CONTAINER-->
+    <!-- SEARCH CONTAINER -->
 
-    <div class="search-container">
-      <form class="form-inline"
-            @submit.prevent="onReset()">
-        <div class="form-group">
-          <label>Email</label>
-          <input v-model="emailFilter"
-                 type="text"
-                 class="form-control ml-sm-2 mr-sm-2 my-2">
-        </div>
-        <div class="form-group">
-          <label>Phone</label>
-          <label>
-            <input v-model="phoneFilter"
-                   type="text"
-                   class="form-control ml-sm-2 mr-sm-2 my-2">
-          </label>
-        </div>
-        <div class="form-group">
-          <label>Status</label>
-          <select name="select"
-                  class="form-control ml-sm-2 mr-sm-2 my-2"
-                  v-model="statusFilter"
-          >
-            <option value="">All Statuses</option>
-            <option v-for="status in User.getStatuses()"
-                    :value="status">
-              {{ status }}
-            </option>
-          </select>
-        </div>
-        <button type="submit"
-                class="btn btn-primary icon-margin">Reset
-        </button>
-      </form>
-    </div>
+    <search-users :filter="filter"
+                  @onReset="onReset()">
+    </search-users>
 
-    <!--TITLE-->
+    <!-- TITLE -->
 
     <div class="card mt-5">
       <div class="card-header">
@@ -78,10 +48,11 @@
             </th>
           </tr>
 
-          <!--EDIT USERS-->
+          <!-- EDIT USERS -->
 
           <tr class="row one-user"
               v-for="(user, index) in filteredUsers">
+
             <template v-if="editId === user.id">
               <td class="col-xl-1">{{ user.id }}</td>
               <td class="col-xl-2">
@@ -133,7 +104,7 @@
               </td>
             </template>
 
-            <!--DATA TABLE-->
+            <!-- DATA TABLE -->
 
             <template v-else>
               <td class="col-lg-3 col-xl-1">
@@ -172,7 +143,6 @@
                      class="fa fa-trash"></i>
                 </a>
               </td>
-
             </template>
           </tr>
         </div>
@@ -184,7 +154,8 @@
 <script>
 import {User} from '../user.js';
 import {UserStorage} from '../localStorageHelper.js';
-import AddNewUser from './addNewUser.vue';
+import AddNewUser from './AddNewUser';
+import SearchUsers from './SearchUsers';
 
 export default {
   data() {
@@ -196,9 +167,11 @@ export default {
       editUser: {},
       controls: [],
       User,
-      emailFilter: '',
-      phoneFilter: '',
-      statusFilter: '',
+      filter: {
+        email: '',
+        phone: '',
+        status: '',
+      }
     };
   },
 
@@ -209,9 +182,9 @@ export default {
   computed: {
     filteredUsers() {
       return this.users.filter(user =>
-        (this.statusFilter === '' || this.statusFilter === user.userStatus)
-        && (this.emailFilter === '' || user.email.includes(this.emailFilter))
-        && (this.phoneFilter === '' || user.phone.includes(this.phoneFilter))
+        (this.filter.status === '' || this.filter.status === user.userStatus)
+        && (this.filter.email === '' || user.email.includes(this.filter.email))
+        && (this.filter.phone === '' || user.phone.includes(this.filter.phone))
       );
     },
   },
@@ -300,12 +273,14 @@ export default {
     },
 
     onReset() {
-      this.emailFilter = '';
-      this.phoneFilter = '';
-      this.statusFilter = '';
+      this.filter.email = '';
+      this.filter.phone = '';
+      this.filter.status = '';
+      }
     },
-  },
+
   components: {
+    SearchUsers,
     AddNewUser,
   }
 

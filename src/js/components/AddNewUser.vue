@@ -71,7 +71,6 @@ export default {
     onAdd() {
       this.$emit('add');
     }
-
   }
 };
 </script>
