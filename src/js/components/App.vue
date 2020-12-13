@@ -1,98 +1,50 @@
 <template>
-
   <div class="wrapper">
-    <div class="card">
-      <div class="card-header">
-        Add a new user
-      </div>
-      <div class="card-body add-container">
-        <form class="form-inline"
-              @submit.prevent="onAdd">
-          <div class="form-group">
-            <label>Full Name</label>
-            <input v-model="newUser.fullName"
-                   type="text"
-                   class="form-control ml-sm-2 mr-sm-2 my-2"
-            >
 
-            <!--                   @keypress="noNumber(event)"-->
-            <!--                     v-validate="{ required: true, regex: /^\d{4} \d{6}$/ }"  -->
+    <add-new-user :newUser="newUser"
+                  @add="onAdd()">
+    </add-new-user>
 
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input v-model="newUser.email"
-                   type="text"
-                   class="form-control ml-sm-2 mr-sm-2 my-2"
-                   required>
-          </div>
-          <div class="form-group">
-            <label>Phone</label>
-            <label>
-              <input v-model="newUser.phone"
-                     type="text"
-                     class="form-control ml-sm-2 mr-sm-1 my-2"
-                     required>
-            </label>
-          </div>
-          <div class="form-group">
-            <label>Status</label>
-            <select name="select"
-                    class="form-control ml-sm-2 mr-sm-1 my-2"
-                    v-model="newUser.userStatus"
-                    required>
-              <option v-for="status in User.getStatuses()"
-                      :value="status">
-                {{ status }}
-              </option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Password</label>
-            <input v-model="newUser.password"
-                   type="text"
-                   class="form-control ml-sm-2 mr-sm-2 my-2"
-                   required>
-          </div>
-          <button type="submit"
-                  class="btn btn-primary icon-margin">Add
-          </button>
-        </form>
-      </div>
-    </div>
+    <!--SEARCH CONTAINER-->
+
     <div class="search-container">
-    <form class="form-inline">
-      <div class="form-group">
-        <label>Email</label>
-        <input v-model="emailFilter"
-               type="text"
-               class="form-control ml-sm-2 mr-sm-2 my-2"
-               >
-      </div>
-      <div class="form-group">
-        <label>Phone</label>
-        <label>
-          <input v-model="phoneFilter"
+      <form class="form-inline"
+            @submit.prevent="onReset()">
+        <div class="form-group">
+          <label>Email</label>
+          <input v-model="emailFilter"
                  type="text"
-                 class="form-control ml-sm-2 mr-sm-2 my-2"
-                 >
-        </label>
-      </div>
-      <div class="form-group">
-        <label>Status</label>
-        <select name="select"
-                class="form-control ml-sm-2 mr-sm-2 my-2"
-                v-model="statusFilter"
-                >
-          <option value="">All Statuses</option>
-          <option v-for="status in User.getStatuses()"
-                  :value="status">
-            {{ status }}
-          </option>
-        </select>
-      </div>
-    </form>
+                 class="form-control ml-sm-2 mr-sm-2 my-2">
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <label>
+            <input v-model="phoneFilter"
+                   type="text"
+                   class="form-control ml-sm-2 mr-sm-2 my-2">
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select name="select"
+                  class="form-control ml-sm-2 mr-sm-2 my-2"
+                  v-model="statusFilter"
+          >
+            <option value="">All Statuses</option>
+            <option v-for="status in User.getStatuses()"
+                    :value="status">
+              {{ status }}
+            </option>
+          </select>
+        </div>
+        <button type="submit"
+                class="btn btn-primary icon-margin">Reset
+        </button>
+      </form>
     </div>
+
+    <!--TITLE-->
+
     <div class="card mt-5">
       <div class="card-header">
         User List
@@ -113,7 +65,7 @@
               Phone
             </th>
             <th class="col-lg-3 col-xl-1">
-                Status
+              Status
             </th>
             <th class="col-lg-3 col-xl-1">
               Password
@@ -125,6 +77,9 @@
               Last Change
             </th>
           </tr>
+
+          <!--EDIT USERS-->
+
           <tr class="row one-user"
               v-for="(user, index) in filteredUsers">
             <template v-if="editId === user.id">
@@ -177,6 +132,9 @@
                       </span>
               </td>
             </template>
+
+            <!--DATA TABLE-->
+
             <template v-else>
               <td class="col-lg-3 col-xl-1">
                 {{ user.id }}
@@ -213,8 +171,8 @@
                   <i @click="onDelete(user.id, index)"
                      class="fa fa-trash"></i>
                 </a>
-
               </td>
+
             </template>
           </tr>
         </div>
@@ -225,93 +183,63 @@
 
 <script>
 import {User} from '../user.js';
+import {UserStorage} from '../localStorageHelper.js';
+import AddNewUser from './addNewUser.vue';
 
 export default {
   data() {
     return {
       users: [],
+      newUser: {},
       lastId: 0,
       editId: null,
       editUser: {},
-      newUser: {},
       controls: [],
       User,
-      emailFilter: "",
-      phoneFilter: "",
-      statusFilter: "",
+      emailFilter: '',
+      phoneFilter: '',
+      statusFilter: '',
     };
   },
 
   created() {
     this.getUsersFromStorage();
     // this.validateUsers();
-
   },
   computed: {
     filteredUsers() {
       return this.users.filter(user =>
-          (this.statusFilter === "" || this.statusFilter === user.userStatus)
-        && (this.emailFilter === "" || user.email.includes(this.emailFilter))
-        && (this.phoneFilter === "" || user.phone.includes(this.phoneFilter))
+        (this.statusFilter === '' || this.statusFilter === user.userStatus)
+        && (this.emailFilter === '' || user.email.includes(this.emailFilter))
+        && (this.phoneFilter === '' || user.phone.includes(this.phoneFilter))
       );
     },
   },
   methods: {
-    // validateUsers() {
-    //   for (let i = 0; i < this.users.length; i++) {
-    //     this.controls.push({
-    //       error: !this.users[i].pattern.test(this.users[i].value),
-    //       activated: this.users[i].value !== ''
-    //     });
-    //   }
-    // },
-    // getStatuses() {
-    //   return ['client', 'partner', 'admin'];
-    // },
-    validateUserData() {
 
-    },
+    onAdd() {
+      let id = this.lastId + 1;
 
-    getUsersFromStorage() {
-      let usersIds = Object.keys(localStorage).map(Number);
-      let maxId = 0;
+      let user = new User(
+        id,
+        this.newUser.fullName,
+        this.newUser.email,
+        this.newUser.password,
+        this.newUser.phone,
+        this.newUser.userStatus,
+        null,
+        null);
 
-      for (let userId of usersIds) {
-        let storageUser = localStorage.getItem(userId.toString());
+      this.users.push(user);
 
-        try {
-          storageUser = JSON.parse(storageUser);
-          let user = new User(
-            storageUser.id,
-            storageUser.fullName,
-            storageUser.email,
-            storageUser.password,
-            storageUser.phone,
-            storageUser.userStatus,
-            storageUser.dateOfCreation,
-            storageUser.dateOfChange
-          );
+      UserStorage.addUser(id, user);
 
-          this.users.push(user);
-
-          if (userId > maxId) {
-
-            maxId = userId;
-          }
-        } catch (e) {
-        }
-      }
-
-      this.lastId = maxId;
-    },
-
-    addUserToLocalStorage(id, user) {
-      const parsed = JSON.stringify(user);
-      localStorage.setItem(id, parsed);
+      this.lastId = id;
+      this.newUser = {};
     },
 
     onUpdate(index) {
-      this.addUserToLocalStorage(this.editId, this.editUser);
+      UserStorage.addUser(this.editId, this.editUser);
 
       this.users[index].id = this.editUser.id;
       this.users[index].fullName = this.editUser.fullName;
@@ -329,11 +257,26 @@ export default {
       this.editId = null;
     },
 
-    onDelete(id, index) {
-      if (confirm('Are you sure you want to delete the user?')) {
-        localStorage.removeItem(id);
-        this.users.splice(index, 1);
+    getUsersFromStorage() {
+      let usersIds = UserStorage.getUsersIds();
+      let maxId = 0;
+
+      for (let userId of usersIds) {
+          let user = UserStorage.getUserById(userId.toString());
+
+          if(user === null) {
+            continue;
+          }
+
+          this.users.push(user);
+
+          if (userId > maxId) {
+
+            maxId = userId;
+          }
       }
+
+      this.lastId = maxId;
     },
 
     onEdit(id, user) {
@@ -349,56 +292,63 @@ export default {
       this.editUser.dateOfChange = user.dateOfChange;
     },
 
-    onAdd() {
-      let id = this.lastId + 1;
-
-      let user = new User(
-        id,
-        this.newUser.fullName,
-        this.newUser.email,
-        this.newUser.password,
-        this.newUser.phone,
-        this.newUser.userStatus,
-        null,
-        null);
-
-      this.users.push(user);
-
-      this.addUserToLocalStorage(id, user);
-
-      this.lastId = id;
-      this.newUser = {};
+    onDelete(id, index) {
+      if (confirm('Are you sure you want to delete the user?')) {
+        UserStorage.removeUserById(id);
+        this.users.splice(index, 1);
+      }
     },
 
-
-    // noNumber(evt) {
-    //   let regex = new RegExp("^[a-zA-Z ]+$");
-    //   let key = String.fromCharCode(!evt.charCode ? evt.which : evt.charCode);
-    //   if (!regex.test(key)) {
-    //     event.preventDefault();
-    //     return false;
-    //   }
-    // }
-
-    // notNumber (input) {
-    //   if (input.value.match(/\d/g || /\+/g)) {
-    //     return false;
-    //   }
-    //   input.classList.add('error');
-    //   return true;
-    // }
-
-    // notEmail(input) {
-    //   if (input.value.match(/@/g)) {
-    // (/.+@.+\..+/i)
-    //     return false;
-    //   }
-    //   input.classList.add('error');
-    //   return true;
-    // }
-
+    onReset() {
+      this.emailFilter = '';
+      this.phoneFilter = '';
+      this.statusFilter = '';
+    },
   },
+  components: {
+    AddNewUser,
+  }
 
 };
 
+// noNumber(evt) {
+//   let regex = new RegExp("^[a-zA-Z ]+$");
+//   let key = String.fromCharCode(!evt.charCode ? evt.which : evt.charCode);
+//   if (!regex.test(key)) {
+//     event.preventDefault();
+//     return false;
+//   }
+// }
+
+// notNumber (input) {
+//   if (input.value.match(/\d/g || /\+/g)) {
+//     return false;
+//   }
+//   input.classList.add('error');
+//   return true;
+// }
+
+// notEmail(input) {
+//   if (input.value.match(/@/g)) {
+// (/.+@.+\..+/i)
+//     return false;
+//   }
+//   input.classList.add('error');
+//   return true;
+// }
+
+// validateUsers() {
+//   for (let i = 0; i < this.users.length; i++) {
+//     this.controls.push({
+//       error: !this.users[i].pattern.test(this.users[i].value),
+//       activated: this.users[i].value !== ''
+//     });
+//   }
+// },
+// getStatuses() {
+//   return ['client', 'partner', 'admin'];
+// },
+// validateUserData() {
+//
+// },
 </script>
