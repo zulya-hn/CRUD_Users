@@ -9,8 +9,7 @@
 
     <!-- SEARCH CONTAINER -->
 
-    <search-users :filter="filter"
-                  @onReset="onReset()">
+    <search-users :filter="filter">
     </search-users>
 
     <!-- TITLE -->
@@ -51,7 +50,7 @@
           <!-- EDIT USERS -->
 
           <tr class="row one-user"
-              v-for="(user, index) in filteredUsers">
+              v-for="(user) in filteredUsers">
 
             <template v-if="editId === user.id">
               <td class="col-xl-1">{{ user.id }}</td>
@@ -94,7 +93,7 @@
               <td class="col-xl-1"></td>
               <td class="col-xl-1">
                       <span class="icon">
-                        <i @click="onUpdate(index)"
+                        <i @click="onUpdate(user.id)"
                            class="fa fa-check"></i>
                       </span>
                 <span class="icon icon-margin">
@@ -139,7 +138,7 @@
                 </a>
                 <a href="#"
                    class="icon icon-margin">
-                  <i @click="onDelete(user.id, index)"
+                  <i @click="onDelete(user.id)"
                      class="fa fa-trash"></i>
                 </a>
               </td>
@@ -165,7 +164,6 @@ export default {
       lastId: 0,
       editId: null,
       editUser: {},
-      controls: [],
       User,
       filter: {
         email: '',
@@ -177,14 +175,14 @@ export default {
 
   created() {
     this.getUsersFromStorage();
-    // this.validateUsers();
   },
+
   computed: {
     filteredUsers() {
       return this.users.filter(user =>
-        (this.filter.status === '' || this.filter.status === user.userStatus)
-        && (this.filter.email === '' || user.email.includes(this.filter.email))
-        && (this.filter.phone === '' || user.phone.includes(this.filter.phone))
+        (user.userStatus === this.filter.status || this.filter.status === '')
+        && (user.email.includes(this.filter.email) || this.filter.email === '')
+        && (user.phone.includes(this.filter.phone) || this.filter.phone === '')
       );
     },
   },
@@ -211,8 +209,9 @@ export default {
       this.newUser = {};
     },
 
-    onUpdate(index) {
+    onUpdate() {
       UserStorage.addUser(this.editId, this.editUser);
+      let index = this.getUsersIndexById(this.editId);
 
       this.users[index].id = this.editUser.id;
       this.users[index].fullName = this.editUser.fullName;
@@ -223,7 +222,6 @@ export default {
       this.users[index].dateOfCreation = this.editUser.dateOfCreation;
       this.users[index].dateOfChange = new Date();
       this.editId = null;
-
     },
 
     onCancel() {
@@ -235,7 +233,7 @@ export default {
       let maxId = 0;
 
       for (let userId of usersIds) {
-          let user = UserStorage.getUserById(userId.toString());
+          let user = UserStorage.getUserById(userId);
 
           if(user === null) {
             continue;
@@ -265,19 +263,19 @@ export default {
       this.editUser.dateOfChange = user.dateOfChange;
     },
 
-    onDelete(id, index) {
+    onDelete(id) {
       if (confirm('Are you sure you want to delete the user?')) {
         UserStorage.removeUserById(id);
+
+        let index = this.getUsersIndexById(id);
         this.users.splice(index, 1);
       }
     },
 
-    onReset() {
-      this.filter.email = '';
-      this.filter.phone = '';
-      this.filter.status = '';
-      }
+    getUsersIndexById(id) {
+      return Object.keys(this.users).find(index => this.users[index].id === id);
     },
+  },
 
   components: {
     SearchUsers,

@@ -49,7 +49,9 @@ export default {
   },
   methods: {
     onReset() {
-      this.$emit('onReset');
+      this.filter.email = '';
+      this.filter.phone = '';
+      this.filter.status = '';
     }
   }
 };
