@@ -3,6 +3,7 @@
 @import 'utils/mixins';
 @import 'utils/fonts';
 @import 'utils/reset';
+@import './styles';
 
 html {
   line-height: $mainLineHeight;
@@ -102,33 +103,5 @@ section,
   }
 }
 
-th, td {
-  text-align: center;
-}
 
-.user-container {
-  max-width: 1600px;
-  margin: 0 auto;
-}
-
-.one-user {
-  margin: 20px;
-  border-bottom: #BEBFC8 solid 1px;
-}
-
-.icon-margin {
-  margin-left: 20px;
-}
-
-.add-container {
-  margin: 0 auto;
-}
-
-.none {
-  display: none;
-}
-.search-container {
-  max-width: 1600px;
-  margin-left: 770px;
-}
 

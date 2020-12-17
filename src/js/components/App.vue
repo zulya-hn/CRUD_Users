@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="container-fluid">
 
     <!--  ADD NEW USER -->
 
@@ -12,67 +12,80 @@
     <search-users :filter="filter">
     </search-users>
 
+    <div v-for="(user) in filteredUsers">
+      <popup :user="user"
+             v-if="popupId === user.id"
+             :popupId="popupId"
+             @closePopup="closePopup()">
+      </popup>
+    </div>
+
     <!-- TITLE -->
 
-    <div class="card mt-5">
+    <div class="card mt-3">
       <div class="card-header">
         User List
       </div>
-      <div class="card-body">
-        <div class="user-container">
-          <tr class="row one-user">
-            <th class="col-lg-3 col-xl-1">
-              ID
-            </th>
-            <th class="col-lg-3 col-xl-2">
-              Full Name
-            </th>
-            <th class="col-lg-3 col-xl-2">
-              Email
-            </th>
-            <th class="col-lg-3 col-xl-2">
-              Phone
-            </th>
-            <th class="col-lg-3 col-xl-1">
-              Status
-            </th>
-            <th class="col-lg-3 col-xl-1">
-              Password
-            </th>
-            <th class="col-lg-3 col-xl-1">
-              Date Of Creation
-            </th>
-            <th class="col-lg-3 col-xl-1">
-              Last Change
-            </th>
-          </tr>
+      <div class="card-body center">
+        <div class="row one-user table-title"
+            v-if="!emptyFilteredUsers">
+          <div class="col-3 col-md-1 col-lg-1 col-xl-1 id"
+              @click="sortIdIncrease = !sortIdIncrease;">
+            ID
+          </div>
+          <div class="col-5 col-md-6 col-md-4 col-lg-3 col-xl-2"
+               @click="sortNameIncrease = !sortNameIncrease;">
+            Full Name
+          </div>
+          <div class="d-none d-lg-block col-lg-2 col-xl-2">
+            Email
+          </div>
+          <div class="d-none d-lg-block col-lg-2 col-xl-2">
+            Phone
+          </div>
+          <div class="d-none col-md-3 d-md-block col-lg-2 col-xl-1">
+            Status
+          </div>
+          <div class="d-none d-xl-block col-lg-2 col-xl-1">
+            Password
+          </div>
+          <div class="d-none d-xl-block col-xl-1">
+            Date Of Creation
+          </div>
+          <div class="d-none d-xl-block col-xl-1">
+            Last Change
+          </div>
+        </div>
+        <div class="row"
+            v-if="emptyFilteredUsers">
+          <div class="col"> {{ message }}</div>
+        </div>
 
-          <!-- EDIT USERS -->
+        <!-- EDIT USERS -->
 
-          <tr class="row one-user"
-              v-for="(user) in filteredUsers">
-
+        <div v-for="(user) in filteredUsers">
+          <div class="row one-user">
             <template v-if="editId === user.id">
-              <td class="col-xl-1">{{ user.id }}</td>
-              <td class="col-xl-2">
+              <div class="col-xl-1">{{ user.id }}</div>
+              <div class="col-xl-2">
                 <input v-model="editUser.fullName"
                        type="text"
                        class="form-control"
                        required>
-              </td>
-              <td class="col-xl-2">
+              </div>
+              <div class="col-xl-2">
                 <input v-model="editUser.email"
                        type="text"
                        class="form-control"
                        required>
-              </td>
-              <td class="col-xl-2">
+              </div>
+              <div class="col-xl-2">
                 <input v-model="editUser.phone"
                        type="text"
                        class="form-control"
                        required>
-              </td>
-              <td class="col-xl-1">
+              </div>
+              <div class="col-xl-1">
                 <select name="select"
                         class="form-control"
                         v-model="editUser.userStatus"
@@ -82,72 +95,75 @@
                     {{ status }}
                   </option>
                 </select>
-              </td>
-              <td class="col-xl-1">
+              </div>
+              <div class="col-xl-1">
                 <input v-model="editUser.password"
                        type="text"
                        class="form-control"
                        required>
-              </td>
-              <td class="col-xl-1"></td>
-              <td class="col-xl-1"></td>
-              <td class="col-xl-1">
-                      <span class="icon">
-                        <i @click="onUpdate(user.id)"
-                           class="fa fa-check"></i>
-                      </span>
-                <span class="icon icon-margin">
-                        <i @click="onCancel"
-                           class="fa fa-ban"></i>
-                      </span>
-              </td>
+              </div>
+              <div class="col-xl-1"></div>
+              <div class="col-xl-1"></div>
+              <div class="col-xl-1">
+                <span class="icon">
+                  <i @click="onUpdate(user.id)"
+                     class="fa fa-check pointer"></i>
+                </span>
+                <span class="icon">
+                  <i @click="onCancel"
+                     class="fa fa-ban pointer"></i>
+                </span>
+              </div>
             </template>
 
             <!-- DATA TABLE -->
 
             <template v-else>
-              <td class="col-lg-3 col-xl-1">
+              <div class="col-3 col-md-1 col-lg-1 col-xl-1">
                 {{ user.id }}
-              </td>
-              <td class="col-lg-3 col-xl-2">
+              </div>
+              <div class="col-5 col-sm-6 col-md-6 col-lg-3 col-xl-2">
                 {{ user.fullName }}
-              </td>
-              <td class="col-lg-3 col-xl-2">
+              </div>
+              <div class="d-none d-lg-block col-lg-2 col-xl-2">
                 {{ user.email }}
-              </td>
-              <td class="col-lg-3 col-xl-2">
+              </div>
+              <div class="d-none d-lg-block col-lg-2 col-xl-2">
                 {{ user.phone }}
-              </td>
-              <td class="col-lg-3 col-xl-1">
+              </div>
+              <div class="d-none d-md-block col-md-3 col-lg-2 col-xl-1">
                 {{ user.userStatus }}
-              </td>
-              <td class="col-lg-3 col-xl-1">
+              </div>
+              <div class="d-none d-xl-block col-lg-2 col-xl-1">
                 {{ user.password }}
-              </td>
-              <td class="col-lg-3 col-xl-1">
+              </div>
+              <div class="d-none d-xl-block col-xl-1">
                 {{ user.getDateOfCreation() }}
-              </td>
-              <td class="col-lg-3 col-xl-1">
+              </div>
+              <div class="d-none d-xl-block col-xl-1">
                 {{ user.getDateOfChange() }}
-              </td>
-              <td class="col-xl-1">
-                <a href="#"
-                   class="icon">
+              </div>
+              <div class="col-4 col-sm-3 col-md-2 col-lg-2 col-xl-1">
+                <a class="d-xl-none icon pointer">
+                  <i @click="showPopup(user.id)"
+                     class="fa fal fa-info-circle mr-sm-2"></i>
+                </a>
+                <a class="icon pointer">
                   <i @click="onEdit(user.id, user)"
-                     class="fa fa-pencil"></i>
+                     class="fa fa-pencil mr-sm-2"></i>
                 </a>
-                <a href="#"
-                   class="icon icon-margin">
+                <a class="icon pointer">
                   <i @click="onDelete(user.id)"
-                     class="fa fa-trash"></i>
+                     class="fa fa-trash mr-sm-2"></i>
                 </a>
-              </td>
+              </div>
             </template>
-          </tr>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <!--  </div>-->
 </template>
 
 <script>
@@ -155,6 +171,7 @@ import {User} from '../user.js';
 import {UserStorage} from '../localStorageHelper.js';
 import AddNewUser from './AddNewUser';
 import SearchUsers from './SearchUsers';
+import Popup from './Popup';
 
 export default {
   data() {
@@ -169,7 +186,13 @@ export default {
         email: '',
         phone: '',
         status: '',
-      }
+      },
+      message: 'No matches found',
+      sortIdIncrease: true,
+      sortNameIncrease: true,
+      hiddenInfoPopup: true,
+      popupId: 0,
+      isModalVisible: false,
     };
   },
 
@@ -179,14 +202,43 @@ export default {
 
   computed: {
     filteredUsers() {
-      return this.users.filter(user =>
+
+      this.users.sort( (a, b) => this.sortNameIncrease ?
+        a.fullName.localeCompare(b.fullName) : b.fullName.localeCompare(a.fullName));
+      this.users.sort( (a, b) => this.sortIdIncrease ? a.id - b.id : b.id - a.id);
+
+      return this.users
+        .filter(user =>
         (user.userStatus === this.filter.status || this.filter.status === '')
         && (user.email.includes(this.filter.email) || this.filter.email === '')
         && (user.phone.includes(this.filter.phone) || this.filter.phone === '')
-      );
+        );
+    },
+    emptyFilteredUsers() {
+      return this.filteredUsers.length === 0;
     },
   },
+
+  watch: {
+    isModalVisible: function() {
+      if(this.isModalVisible){
+        document.documentElement.style.overflow = 'hidden'
+        return
+      }
+      document.documentElement.style.overflow = 'auto'
+    }
+  },
+
   methods: {
+
+    closePopup() {
+      this.popupId = 0
+    },
+
+    showPopup(id) {
+      this.popupId = id;
+      this.isModalVisible = false;
+    },
 
     onAdd() {
       let id = this.lastId + 1;
@@ -210,6 +262,8 @@ export default {
     },
 
     onUpdate() {
+      this.editUser.dateOfChange = new Date();
+
       UserStorage.addUser(this.editId, this.editUser);
       let index = this.getUsersIndexById(this.editId);
 
@@ -220,7 +274,7 @@ export default {
       this.users[index].phone = this.editUser.phone;
       this.users[index].userStatus = this.editUser.userStatus;
       this.users[index].dateOfCreation = this.editUser.dateOfCreation;
-      this.users[index].dateOfChange = new Date();
+      this.users[index].dateOfChange = this.editUser.dateOfChange;
       this.editId = null;
     },
 
@@ -233,18 +287,18 @@ export default {
       let maxId = 0;
 
       for (let userId of usersIds) {
-          let user = UserStorage.getUserById(userId);
+        let user = UserStorage.getUserById(userId);
 
-          if(user === null) {
-            continue;
-          }
+        if (user === null) {
+          continue;
+        }
 
-          this.users.push(user);
+        this.users.push(user);
 
-          if (userId > maxId) {
+        if (userId > maxId) {
 
-            maxId = userId;
-          }
+          maxId = userId;
+        }
       }
 
       this.lastId = maxId;
@@ -280,48 +334,9 @@ export default {
   components: {
     SearchUsers,
     AddNewUser,
+    Popup
   }
 
 };
 
-// noNumber(evt) {
-//   let regex = new RegExp("^[a-zA-Z ]+$");
-//   let key = String.fromCharCode(!evt.charCode ? evt.which : evt.charCode);
-//   if (!regex.test(key)) {
-//     event.preventDefault();
-//     return false;
-//   }
-// }
-
-// notNumber (input) {
-//   if (input.value.match(/\d/g || /\+/g)) {
-//     return false;
-//   }
-//   input.classList.add('error');
-//   return true;
-// }
-
-// notEmail(input) {
-//   if (input.value.match(/@/g)) {
-// (/.+@.+\..+/i)
-//     return false;
-//   }
-//   input.classList.add('error');
-//   return true;
-// }
-
-// validateUsers() {
-//   for (let i = 0; i < this.users.length; i++) {
-//     this.controls.push({
-//       error: !this.users[i].pattern.test(this.users[i].value),
-//       activated: this.users[i].value !== ''
-//     });
-//   }
-// },
-// getStatuses() {
-//   return ['client', 'partner', 'admin'];
-// },
-// validateUserData() {
-//
-// },
 </script>

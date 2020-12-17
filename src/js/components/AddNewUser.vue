@@ -1,58 +1,81 @@
 <template>
-  <div class="card">
+  <div class="card mt-3">
     <div class="card-header">
       Add a new user
     </div>
-    <div class="card-body add-container">
-      <form class="form-inline"
-            @submit.prevent="onAdd">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input v-model="newUser.fullName"
-                 type="text"
-                 class="form-control ml-sm-2 mr-sm-2 my-2"
-          >
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input v-model="newUser.email"
-                 type="text"
-                 class="form-control ml-sm-2 mr-sm-2 my-2"
-                 required>
-        </div>
-        <div class="form-group">
-          <label>Phone</label>
-          <label>
-            <input v-model="newUser.phone"
+      <div class="card-body">
+        <form class="row flex-end"
+              @submit.prevent="onAdd">
+          <div class="form-group col-12 col-sm-6 col-md-auto">
+            <label>Full Name</label>
+            <span class="fa mx-2"
+                  v-if="controls.fullName.activated"
+                  :class="controls.fullName.error ?
+                     'fa-exclamation-circle text-danger' :
+                     'fa-check-circle text-success'">
+              </span>
+            <input v-model="newUser.fullName"
+                   @input="onInput($event.target.value, 'fullName')"
                    type="text"
-                   class="form-control ml-sm-2 mr-sm-1 my-2"
+                   class="form-control"
                    required>
-          </label>
-        </div>
-        <div class="form-group">
-          <label>Status</label>
-          <select name="select"
-                  class="form-control ml-sm-2 mr-sm-1 my-2"
-                  v-model="newUser.userStatus"
-                  required>
-            <option v-for="status in User.getStatuses()"
-                    :value="status">
-              {{ status }}
-            </option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input v-model="newUser.password"
-                 type="text"
-                 class="form-control ml-sm-2 mr-sm-2 my-2"
-                 required>
-        </div>
-        <button type="submit"
-                class="btn btn-primary icon-margin">Add
-        </button>
-      </form>
-    </div>
+          </div>
+          <div class="form-group col-12 col-sm-6 col-md-auto">
+            <label>Email</label>
+            <span class="fa mx-2"
+                  v-if="controls.email.activated"
+                  :class="controls.email.error ?
+                     'fa-exclamation-circle text-danger' :
+                     'fa-check-circle text-success'">
+              </span>
+            <input v-model="newUser.email"
+                   @input="onInput($event.target.value, 'email')"
+                   type="text"
+                   class="form-control"
+                   required>
+          </div>
+          <div class="form-group col-12 col-sm-6 col-md-auto">
+            <label>Phone</label>
+              <span class="fa mx-2"
+                    v-if="controls.phone.activated"
+                    :class="controls.phone.error ?
+                     'fa-exclamation-circle text-danger' :
+                     'fa-check-circle text-success'">
+              </span>
+              <input v-model="newUser.phone"
+                     @input="onInput($event.target.value, 'phone')"
+                     type="text"
+                     class="form-control"
+                     required>
+          </div>
+          <div class="form-group col-12 col-sm-6 col-md-auto">
+            <label>Status</label>
+            <select name="select"
+                    class="form-control"
+                    v-model="newUser.userStatus"
+                    required>
+              <option v-for="status in User.getStatuses()"
+                      :value="status">
+                {{ status }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-12 col-sm-6 col-md-auto ">
+            <label>Password</label>
+            <input v-model="newUser.password"
+                   type="text"
+                   class="form-control"
+                   required>
+          </div>
+          <div class="form-group col-12 col-sm-6 col-md-auto">
+            <button type="submit"
+                    class="btn btn-primary button"
+                    :disabled="submitDisabled">
+                  Add
+            </button>
+          </div>
+        </form>
+      </div>
   </div>
 </template>
 
@@ -65,12 +88,50 @@ export default {
   data() {
     return {
       User,
+      validatePattern: {
+        fullName: /^[a-zA-Z ]{2,30}$/,
+        phone: /^[0-9]{7,14}$/,
+        email: (/.+@.+\..+/i),
+      },
+      controls: {},
+      submitDisabled: false
     };
   },
+  created() {
+    this.initValidation();
+  },
   methods: {
+    onInput(value, pattern) {
+      let control = this.controls[pattern];
+      control.error = !this.validatePattern[pattern].test(value);
+      control.activated = true;
+
+      this.submitDisabled = this.calculateDisabled();
+    },
+
     onAdd() {
+      this.initValidation();
       this.$emit('add');
+    },
+
+    initValidation() {
+      for (let pattern in this.validatePattern) {
+        this.controls[pattern] = {
+          error: false,
+          activated: false
+        };
+      }
+    },
+
+    calculateDisabled() {
+      for (let pattern in this.validatePattern) {
+        if (this.controls[pattern].activated === true && this.controls[pattern].error === true) {
+          return true;
+        }
+      }
+
+      return false;
     }
-  }
+  },
 };
 </script>
