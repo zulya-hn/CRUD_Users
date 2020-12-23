@@ -5,9 +5,9 @@
            @click="closePopup()">
       </div>
         <div class="alert__window modal-open">
-          <h2 class="alert__header">
+          <div class="alert__header">
             User List
-          </h2>
+          </div>
           <table class="table table-striped">
             <tr class="row">
               <th class="col-4">ID</th>
@@ -33,7 +33,6 @@
               <th class="col-4">Password</th>
               <td class="col-8">{{ user.password }}</td>
             </tr>
-<!--            @param User user -->
             <tr class="row">
               <th class="col-4">Date Of Creation</th>
               <td class="col-8">{{ user.getDateOfCreation() }}</td>
@@ -60,22 +59,14 @@ export default {
       User,
     };
   },
-  // created() {
-  //   if (this.popupId === this.user.id) {
-  //     window.onscroll = function(){
-  //       return false;
-  //     }
-  //   }
-  // },
   methods: {
     closePopup() {
       this.$emit('closePopup');
-      this.isModalVisible = true;
     }
   },
   computed: {
     openPopup() {
-     return this.popupId === this.user.id;
+      return this.popupId === this.user.id;
     }
   }
 

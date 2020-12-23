@@ -29,13 +29,22 @@
       <div class="card-body center">
         <div class="row one-user table-title"
             v-if="!emptyFilteredUsers">
-          <div class="col-3 col-md-1 col-lg-1 col-xl-1 id"
-              @click="sortIdIncrease = !sortIdIncrease;">
+          <div class="col-3 col-md-2 col-lg-1 col-xl-1 hover"
+               id="id"
+               @click="sortId()">
             ID
+            <i class="fa fas"
+                  :class="sortIdIncrease == null ? 'fa-sort' :
+                  (sortIdIncrease ? 'fa-sort-down' : 'fa-sort-up')">
+            </i>
           </div>
-          <div class="col-5 col-md-6 col-md-4 col-lg-3 col-xl-2"
-               @click="sortNameIncrease = !sortNameIncrease;">
+          <div class="col-5 full-name-padding col-md-5 col-md-4 col-lg-3 col-xl-2 hover"
+               @click="sortName()">
             Full Name
+            <i class="fa fas"
+               :class="sortNameIncrease == null ? 'fa-sort' :
+                  (sortNameIncrease ? 'fa-sort-down' : 'fa-sort-up')">
+            </i>
           </div>
           <div class="d-none d-lg-block col-lg-2 col-xl-2">
             Email
@@ -66,26 +75,29 @@
         <div v-for="(user) in filteredUsers">
           <div class="row one-user">
             <template v-if="editId === user.id">
-              <div class="col-xl-1">{{ user.id }}</div>
-              <div class="col-xl-2">
+              <div class="col-xl-1 col-md-6 pt-3">{{ user.id }}</div>
+              <div class="col-12 col-md-6 col-xl-2 my-2">
                 <input v-model="editUser.fullName"
                        type="text"
                        class="form-control"
-                       required>
+                       required
+                       placeholder="Full Name">
               </div>
-              <div class="col-xl-2">
+              <div class="col-12 col-md-6 col-xl-2 my-2">
                 <input v-model="editUser.email"
                        type="text"
                        class="form-control"
-                       required>
+                       required
+                       placeholder="Email">
               </div>
-              <div class="col-xl-2">
+              <div class="col-12 col-md-6 col-xl-2 my-2">
                 <input v-model="editUser.phone"
                        type="text"
                        class="form-control"
-                       required>
+                       required
+                       placeholder="Phone">
               </div>
-              <div class="col-xl-1">
+              <div class="col-12 col-md-6 col-xl-1 my-2">
                 <select name="select"
                         class="form-control"
                         v-model="editUser.userStatus"
@@ -96,15 +108,16 @@
                   </option>
                 </select>
               </div>
-              <div class="col-xl-1">
+              <div class="col-12 col-md-6 col-xl-1 my-2">
                 <input v-model="editUser.password"
                        type="text"
                        class="form-control"
+                       placeholder="Full Name"
                        required>
               </div>
               <div class="col-xl-1"></div>
               <div class="col-xl-1"></div>
-              <div class="col-xl-1">
+              <div class="mt-2 mt-xl-3 col-xl-1">
                 <span class="icon">
                   <i @click="onUpdate(user.id)"
                      class="fa fa-check pointer"></i>
@@ -119,10 +132,10 @@
             <!-- DATA TABLE -->
 
             <template v-else>
-              <div class="col-3 col-md-1 col-lg-1 col-xl-1">
+              <div class="col-3 col-md-2 col-lg-1 col-xl-1">
                 {{ user.id }}
               </div>
-              <div class="col-5 col-sm-6 col-md-6 col-lg-3 col-xl-2">
+              <div class="col-5 col-sm- col-md-5 col-lg-3 col-xl-2">
                 {{ user.fullName }}
               </div>
               <div class="d-none d-lg-block col-lg-2 col-xl-2">
@@ -188,8 +201,8 @@ export default {
         status: '',
       },
       message: 'No matches found',
-      sortIdIncrease: true,
-      sortNameIncrease: true,
+      sortIdIncrease: null,
+      sortNameIncrease: null,
       hiddenInfoPopup: true,
       popupId: 0,
       isModalVisible: false,
@@ -202,17 +215,22 @@ export default {
 
   computed: {
     filteredUsers() {
-
-      this.users.sort( (a, b) => this.sortNameIncrease ?
-        a.fullName.localeCompare(b.fullName) : b.fullName.localeCompare(a.fullName));
-      this.users.sort( (a, b) => this.sortIdIncrease ? a.id - b.id : b.id - a.id);
-
-      return this.users
-        .filter(user =>
-        (user.userStatus === this.filter.status || this.filter.status === '')
-        && (user.email.includes(this.filter.email) || this.filter.email === '')
-        && (user.phone.includes(this.filter.phone) || this.filter.phone === '')
+      let filteredUsers = this.users.filter(user =>
+          (user.userStatus === this.filter.status || this.filter.status === '')
+          && (user.email.includes(this.filter.email) || this.filter.email === '')
+          && (user.phone.includes(this.filter.phone) || this.filter.phone === '')
         );
+
+      if (this.sortIdIncrease !== null) {
+        filteredUsers.sort( (a, b) => this.sortIdIncrease ? a.id - b.id : b.id - a.id);
+      }
+
+      if (this.sortNameIncrease !== null) {
+        filteredUsers.sort( (a, b) => this.sortNameIncrease ?
+          a.fullName.localeCompare(b.fullName) : b.fullName.localeCompare(a.fullName));
+      }
+
+      return filteredUsers;
     },
     emptyFilteredUsers() {
       return this.filteredUsers.length === 0;
@@ -231,13 +249,37 @@ export default {
 
   methods: {
 
+    sortId() {
+      if(this.sortIdIncrease === null) {
+        this.sortIdIncrease = true;
+      }
+
+      else if (this.sortIdIncrease === true) {
+        this.sortIdIncrease = false
+      }
+
+      else if (this.sortIdIncrease === false) {
+        this.sortIdIncrease = null;
+      }
+    },
+
+    sortName() {
+      if (this.sortNameIncrease === false) {
+        this.sortNameIncrease = null;
+        return;
+      }
+
+      this.sortNameIncrease = !this.sortNameIncrease; // true == !null
+    },
+
     closePopup() {
       this.popupId = 0
+      this.isModalVisible = false;
     },
 
     showPopup(id) {
       this.popupId = id;
-      this.isModalVisible = false;
+      this.isModalVisible = true;
     },
 
     onAdd() {
