@@ -211,6 +211,17 @@ export default {
 
   created() {
     this.getUsersFromStorage();
+
+    if (this.users.length === 0) {
+
+      this.newUser.fullName = "name";
+      this.newUser.email = "ww@ww.ru";
+      this.newUser.password = "password";
+      this.newUser.phone = "555555555";
+      this.newUser.userStatus = "client";
+
+      this.onAdd();
+    }
   },
 
   computed: {
