@@ -12,7 +12,7 @@
         <div class="card-body">
           <form class="row flex-end"
                 @submit.prevent="onAdd">
-            <div class="form-group col-12 col-sm-6 col-md-6 col-lg-4 col-xl-2">
+            <div class="form-group col-12 col-sm-6 col-lg-4 col-xl-2">
               <label>Full Name</label>
               <span class="fa mx-2"
                     v-if="controls.fullName.activated"
@@ -26,7 +26,7 @@
                      class="form-control"
                      required>
             </div>
-            <div class="form-group col-12 col-sm-6 col-md-6 col-lg-4 col-xl-2">
+            <div class="form-group col-12 col-sm-6 col-lg-4 col-xl-2">
               <label>Email</label>
               <span class="fa mx-2"
                     v-if="controls.email.activated"

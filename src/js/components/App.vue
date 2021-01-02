@@ -29,7 +29,7 @@
       <div class="card-body center">
         <div class="row one-user table-title"
             v-if="!emptyFilteredUsers">
-          <div class="col-3 col-md-2 col-lg-1 col-xl-1 hover"
+          <div class="col-3 col-md-2 col-lg-1 hover"
                id="id"
                @click="sortId()">
             ID
@@ -46,10 +46,10 @@
                   (sortNameIncrease ? 'fa-sort-down' : 'fa-sort-up')">
             </i>
           </div>
-          <div class="d-none d-lg-block col-lg-2 col-xl-2">
+          <div class="d-none d-lg-block col-lg-2">
             Email
           </div>
-          <div class="d-none d-lg-block col-lg-2 col-xl-2">
+          <div class="d-none d-lg-block col-lg-2">
             Phone
           </div>
           <div class="d-none col-md-3 d-md-block col-lg-2 col-xl-1">
@@ -138,10 +138,10 @@
               <div class="col-5 col-sm- col-md-5 col-lg-3 col-xl-2">
                 {{ user.fullName }}
               </div>
-              <div class="d-none d-lg-block col-lg-2 col-xl-2">
+              <div class="d-none d-lg-block col-lg-2">
                 {{ user.email }}
               </div>
-              <div class="d-none d-lg-block col-lg-2 col-xl-2">
+              <div class="d-none d-lg-block col-lg-2">
                 {{ user.phone }}
               </div>
               <div class="d-none d-md-block col-md-3 col-lg-2 col-xl-1">
